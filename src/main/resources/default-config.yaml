@@ -1,10 +1,10 @@
 capabilities:
   - interface: rest
-    readerClass: SwaggerCapabilitiesReader
+    readerClass: com.hltech.contracts.judged.publisher.capabilities.SwaggerCapabilitiesReader
     config:
       swaggerLocation: ./target/classes/static/swagger/
 expectations:
   - interface: rest
-    readerClass: PactExpectationsReader
+    readerClass: com.hltech.contracts.judged.publisher.expectations.PactExpectationsReader
     config:
       pactsLocation: ./target/pacts
