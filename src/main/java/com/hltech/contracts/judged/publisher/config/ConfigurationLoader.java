@@ -19,7 +19,7 @@ public class ConfigurationLoader {
     }
 
     public ContractPublisherConfig loadDefaultConfig() throws IOException {
-        return loadConfig(ConfigurationLoader.class.getResourceAsStream("./default-config.yaml"));
+        return loadConfig(ConfigurationLoader.class.getResourceAsStream("/default-config.yaml"));
     }
 
     private ContractPublisherConfig loadConfig(InputStream src) throws IOException {
