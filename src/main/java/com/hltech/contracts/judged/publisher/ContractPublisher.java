@@ -6,14 +6,15 @@ import com.hltech.contracts.judged.publisher.config.ConfigurationLoader;
 import com.hltech.contracts.judged.publisher.config.ContractPublisherConfig;
 import com.hltech.contracts.judged.publisher.config.ReaderConfig;
 import com.hltech.contracts.judged.publisher.integration.judged.ServiceContractsForm;
+import feign.Contract;
 import feign.Feign;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import feign.jaxrs.JAXRSContract;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.*;
 import com.hltech.contracts.judged.publisher.integration.judged.JudgeDClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.HashMap;
@@ -21,20 +22,21 @@ import java.util.Map;
 
 import static java.lang.String.format;
 
-@Slf4j
 public class ContractPublisher {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContractPublisher.class);
 
     public static void main(String[] args) throws Exception {
 
         try {
             final CliOptions cliOptions = CliOptions.parseCommandList(args);
 
-            log.info("--------------------------");
-            log.info("configFile = " + (cliOptions.getConfigFile()==null?"<default>":cliOptions.getConfigFile()));
-            log.info("serviceName = " + cliOptions.getServiceName());
-            log.info("serviceVersion = " + cliOptions.getServiceVersion());
-            log.info("Judge-D location = " + cliOptions.getJudgeDLocation());
-            log.info("--------------------------");
+            LOGGER.info("--------------------------");
+            LOGGER.info("configFile = " + (cliOptions.getConfigFile()==null?"<default>":cliOptions.getConfigFile()));
+            LOGGER.info("serviceName = " + cliOptions.getServiceName());
+            LOGGER.info("serviceVersion = " + cliOptions.getServiceVersion());
+            LOGGER.info("Judge-D location = " + cliOptions.getJudgeDLocation());
+            LOGGER.info("--------------------------");
 
 
             ConfigurationLoader configurationLoader = new ConfigurationLoader(new ObjectMapper(new YAMLFactory()));
@@ -56,7 +58,7 @@ public class ContractPublisher {
             serviceContracts.setExpectations(new HashMap<>());
 
 
-            log.info("publishing service contracts: "+serviceContracts);
+            LOGGER.info("publishing service contracts: "+serviceContracts);
 
             JudgeDClient contractPublisher = Feign.builder()
                     .decoder(new JacksonDecoder())
@@ -75,7 +77,6 @@ public class ContractPublisher {
 
 
 
-    @Getter
     public static class CliOptions {
 
         private static final Options options = createOptions();
@@ -102,7 +103,7 @@ public class ContractPublisher {
         }
 
         public static CliOptions parseCommandList(String[] args) throws ParseException, IllegalArgumentException {
-            CommandLineParser parser = new BasicParser();
+            CommandLineParser parser = new DefaultParser();
             CommandLine cmd = parser.parse(options, args);
 
             if (!cmd.hasOption("serviceName") || !cmd.hasOption("serviceVersion")|| !cmd.hasOption("judgeDLocation")) {
@@ -120,9 +121,27 @@ public class ContractPublisher {
             }
         }
 
+        public File getConfigFile() {
+            return configFile;
+        }
+
+        public String getServiceName() {
+            return serviceName;
+        }
+
+        public String getServiceVersion() {
+            return serviceVersion;
+        }
+
+        public String getJudgeDLocation() {
+            return judgeDLocation;
+        }
+
         public static void showHelp() {
             HelpFormatter formatter = new HelpFormatter();
             formatter.printHelp("judge-d-contract-publisher", options, true);
         }
+
+
     }
 }

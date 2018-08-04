@@ -1,15 +1,33 @@
 package com.hltech.contracts.judged.publisher.config;
 
-import lombok.Data;
-import lombok.ToString;
-
-import java.util.List;
 import java.util.Map;
 
-@Data
-@ToString
 public class ContractPublisherConfig {
 
     private Map<String, ReaderConfig> capabilities;
     private Map<String, ReaderConfig> expectations;
+
+    public Map<String, ReaderConfig> getCapabilities() {
+        return capabilities;
+    }
+
+    public void setCapabilities(Map<String, ReaderConfig> capabilities) {
+        this.capabilities = capabilities;
+    }
+
+    public Map<String, ReaderConfig> getExpectations() {
+        return expectations;
+    }
+
+    public void setExpectations(Map<String, ReaderConfig> expectations) {
+        this.expectations = expectations;
+    }
+
+    @Override
+    public String toString() {
+        return "ContractPublisherConfig{" +
+                "capabilities=" + capabilities +
+                ", expectations=" + expectations +
+                '}';
+    }
 }

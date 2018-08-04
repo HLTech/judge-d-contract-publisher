@@ -1,16 +1,10 @@
 package com.hltech.contracts.judged.publisher.config;
 
 import com.hltech.contracts.judged.publisher.capabilities.CapabilitiesReader;
-import lombok.Data;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Constructor;
 import java.util.Map;
 
-@Data
-@ToString
-@Slf4j
 public class ReaderConfig {
 
     private String readerClass;
@@ -26,5 +20,21 @@ public class ReaderConfig {
         } catch (Exception e ){
             throw new ContractReadException("unable to read contracts with: "+readerClass, e);
         }
+    }
+
+    public String getReaderClass() {
+        return readerClass;
+    }
+
+    public void setReaderClass(String readerClass) {
+        this.readerClass = readerClass;
+    }
+
+    public Map<String, String> getConfig() {
+        return config;
+    }
+
+    public void setConfig(Map<String, String> config) {
+        this.config = config;
     }
 }
