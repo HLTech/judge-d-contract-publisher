@@ -1,8 +1,8 @@
 capabilities:
-  - interface: rest
+  rest:
     readerClass: SwaggerCapabilitiesReader
     config:
       swaggerLocation: ./target/classes/static/swagger/
 expectations:
-  - interface: rest
+  rest:
     readerClass: PactExpectationsReader

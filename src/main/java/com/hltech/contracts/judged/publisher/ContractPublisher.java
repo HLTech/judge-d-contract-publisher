@@ -2,6 +2,7 @@ package com.hltech.contracts.judged.publisher;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.hltech.contracts.judged.publisher.config.ConfigurationLoader;
 import com.hltech.contracts.judged.publisher.config.ContractPublisherConfig;
 import com.hltech.contracts.judged.publisher.config.ReaderConfig;
 import com.hltech.contracts.judged.publisher.integration.judged.ServiceContractsForm;
@@ -15,9 +16,10 @@ import org.apache.commons.cli.*;
 import com.hltech.contracts.judged.publisher.integration.judged.JudgeDClient;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import static java.lang.String.format;
 
 @Slf4j
 public class ContractPublisher {
@@ -34,15 +36,20 @@ public class ContractPublisher {
             log.info("Judge-D location = " + cliOptions.getJudgeDLocation());
             log.info("--------------------------");
 
-            ContractPublisherConfig contractPublisherConfig = loadConfig(cliOptions.getConfigFile());
+
+            ConfigurationLoader configurationLoader = new ConfigurationLoader(new ObjectMapper(new YAMLFactory()));
+
+            ContractPublisherConfig contractPublisherConfig = cliOptions.getConfigFile()!=null
+                    ? configurationLoader.loadConfig(cliOptions.getConfigFile())
+                    : configurationLoader.loadDefaultConfig();
 
             ServiceContractsForm serviceContracts = new ServiceContractsForm();
 
             Map<String, String> capabilities = new HashMap<>();
-            for (ReaderConfig rc : contractPublisherConfig.getCapabilities()) {
+            for (Map.Entry<String, ReaderConfig> rc : contractPublisherConfig.getCapabilities().entrySet()) {
                 capabilities.put(
-                        rc.get_interface(),
-                        rc.read()
+                        rc.getKey(),
+                        rc.getValue().read()
                 );
             }
             serviceContracts.setCapabilities(capabilities);
@@ -66,26 +73,19 @@ public class ContractPublisher {
 
     }
 
-    private static ContractPublisherConfig loadConfig(String configFile) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
-        if (configFile == null) {
 
-            return objectMapper.readValue(ContractPublisher.class.getResourceAsStream("/default-config.yaml"), ContractPublisherConfig.class);
-        } else {
-            return objectMapper.readValue(new File(configFile), ContractPublisherConfig.class);
-        }
-    }
 
     @Getter
     public static class CliOptions {
 
         private static final Options options = createOptions();
-        private final String configFile;
+
+        private final File configFile;
         private final String serviceName;
         private final String serviceVersion;
         private final String judgeDLocation;
 
-        public CliOptions(String configFile, String serviceName, String serviceVersion, String judgeDLocation) {
+        public CliOptions(File configFile, String serviceName, String serviceVersion, String judgeDLocation) {
             this.configFile = configFile;
             this.serviceName = serviceName;
             this.serviceVersion = serviceVersion;
@@ -101,19 +101,23 @@ public class ContractPublisher {
             return options;
         }
 
-        public static CliOptions parseCommandList(String[] args) throws ParseException {
+        public static CliOptions parseCommandList(String[] args) throws ParseException, IllegalArgumentException {
             CommandLineParser parser = new BasicParser();
             CommandLine cmd = parser.parse(options, args);
 
             if (!cmd.hasOption("serviceName") || !cmd.hasOption("serviceVersion")|| !cmd.hasOption("judgeDLocation")) {
                 throw new ParseException("");
             }
-
-            return new CliOptions(
-                    cmd.getOptionValue("c"),
-                    cmd.getOptionValue("sn"),
-                    cmd.getOptionValue("sv"),
-                    cmd.getOptionValue("jd"));
+            File configFile = cmd.getOptionValue("c")!=null ? new File(cmd.getOptionValue("c")) : null;
+            if (configFile == null || configFile.exists() && configFile.isFile()) {
+                return new CliOptions(
+                        configFile,
+                        cmd.getOptionValue("sn"),
+                        cmd.getOptionValue("sv"),
+                        cmd.getOptionValue("jd"));
+            } else {
+                throw new IllegalArgumentException(format("Config file '%s' is doesnt exist or is not a file.", cmd.getOptionValue("c")));
+            }
         }
 
         public static void showHelp() {

@@ -1,10 +1,9 @@
 package com.hltech.contracts.judged.publisher.config;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.hltech.contracts.judged.publisher.capabilities.CapabilitiesReader;
 import lombok.Data;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import com.hltech.contracts.judged.publisher.capabilities.CapabilitiesReader;
 
 import java.lang.reflect.Constructor;
 import java.util.Map;
@@ -13,9 +12,6 @@ import java.util.Map;
 @ToString
 @Slf4j
 public class ReaderConfig {
-
-    @JsonProperty("interface")
-    private String _interface;
 
     private String readerClass;
 
