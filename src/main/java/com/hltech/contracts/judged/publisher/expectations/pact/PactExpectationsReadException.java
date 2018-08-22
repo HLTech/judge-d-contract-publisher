@@ -1,4 +1,4 @@
-package com.hltech.contracts.judged.publisher.expectations;
+package com.hltech.contracts.judged.publisher.expectations.pact;
 
 public class PactExpectationsReadException extends RuntimeException {
 

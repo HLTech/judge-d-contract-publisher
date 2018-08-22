@@ -1,7 +1,8 @@
-package com.hltech.contracts.judged.publisher.expectations;
+package com.hltech.contracts.judged.publisher.expectations.pact;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hltech.contracts.judged.publisher.expectations.Expectation;
+import com.hltech.contracts.judged.publisher.expectations.ExpectationsReader;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -60,19 +61,7 @@ public class PactExpectationsReader implements ExpectationsReader {
     }
 
     private Expectation readExpectation(File file) throws IOException {
-        return new Expectation(getProviderName(file), readContent(file));
+        Pact pact = objectMapper.readValue(file, Pact.class);
+        return new Expectation(pact.getProvider().getName(), objectMapper.writeValueAsString(pact));
     }
-
-    private String getProviderName(File file) throws IOException {
-        JsonNode jsonNode = objectMapper.readTree(file);
-
-        return jsonNode.get("provider").get("name").textValue();
-    }
-
-    private String readContent(File file) throws IOException {
-        JsonNode jsonNode = objectMapper.readTree(file);
-
-        return objectMapper.writeValueAsString(jsonNode);
-    }
-
 }
