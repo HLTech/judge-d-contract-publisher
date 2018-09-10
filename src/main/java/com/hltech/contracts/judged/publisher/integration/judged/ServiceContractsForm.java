@@ -28,8 +28,8 @@ public class ServiceContractsForm {
     @Override
     public String toString() {
         return "ServiceContractsForm{" +
-                "capabilities=" + capabilities +
-                ", expectations=" + expectations +
-                '}';
+            "capabilities=" + capabilities +
+            ", expectations=" + expectations +
+            '}';
     }
 }

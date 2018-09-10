@@ -1,9 +1,9 @@
 package com.hltech.contracts.judged.publisher.capabilities;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import java.util.Properties;
 
 public interface CapabilitiesReader {
 
-    String read() throws Exception;
+    String read(Properties properties);
 
 }

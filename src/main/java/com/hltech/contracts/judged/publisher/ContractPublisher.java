@@ -1,26 +1,19 @@
 package com.hltech.contracts.judged.publisher;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.hltech.contracts.judged.publisher.config.ConfigurationLoader;
-import com.hltech.contracts.judged.publisher.config.ContractPublisherConfig;
-import com.hltech.contracts.judged.publisher.config.ReaderConfig;
+import com.hltech.contracts.judged.publisher.capabilities.CapabilitiesReader;
+import com.hltech.contracts.judged.publisher.expectations.Expectation;
+import com.hltech.contracts.judged.publisher.expectations.ExpectationsReader;
+import com.hltech.contracts.judged.publisher.integration.judged.JudgeDClient;
 import com.hltech.contracts.judged.publisher.integration.judged.ServiceContractsForm;
-import feign.Contract;
 import feign.Feign;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import feign.jaxrs.JAXRSContract;
 import org.apache.commons.cli.*;
-import com.hltech.contracts.judged.publisher.integration.judged.JudgeDClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-
-import static java.lang.String.format;
+import java.util.*;
 
 public class ContractPublisher {
 
@@ -32,70 +25,88 @@ public class ContractPublisher {
             final CliOptions cliOptions = CliOptions.parseCommandList(args);
 
             LOGGER.info("--------------------------");
-            LOGGER.info("configFile = " + (cliOptions.getConfigFile()==null?"<default>":cliOptions.getConfigFile()));
             LOGGER.info("serviceName = " + cliOptions.getServiceName());
             LOGGER.info("serviceVersion = " + cliOptions.getServiceVersion());
             LOGGER.info("Judge-D location = " + cliOptions.getJudgeDLocation());
+            LOGGER.info("Capabilities = " + cliOptions.getCapabilities());
+            LOGGER.info("Expectations = " + cliOptions.getExpectations());
             LOGGER.info("--------------------------");
 
+            ContractReaderLoader contractReaderLoader = new ContractReaderLoader();
+            Map<String, CapabilitiesReader> allAvailableCapabilitiesReaders = contractReaderLoader.getCapabilitiesReaders(cliOptions.getCapabilities());
+            Map<String, ExpectationsReader> allAvailableExpectationsReaders = contractReaderLoader.getExpectationsReaders(cliOptions.getExpectations());
 
-            ConfigurationLoader configurationLoader = new ConfigurationLoader(new ObjectMapper(new YAMLFactory()));
+            ServiceContractsForm serviceContracts = readContracts(
+                allAvailableCapabilitiesReaders,
+                allAvailableExpectationsReaders,
+                System.getProperties()
+            );
 
-            ContractPublisherConfig contractPublisherConfig = cliOptions.getConfigFile()!=null
-                    ? configurationLoader.loadConfig(cliOptions.getConfigFile())
-                    : configurationLoader.loadDefaultConfig();
-
-            ServiceContractsForm serviceContracts = new ServiceContractsForm();
-
-            Map<String, String> capabilities = new HashMap<>();
-            for (Map.Entry<String, ReaderConfig> rc : contractPublisherConfig.getCapabilities().entrySet()) {
-                capabilities.put(
-                        rc.getKey(),
-                        rc.getValue().read()
-                );
-            }
-            serviceContracts.setCapabilities(capabilities);
-            serviceContracts.setExpectations(new HashMap<>());
-
-
-            LOGGER.info("publishing service contracts: "+serviceContracts);
-
+            LOGGER.info("publishing service contracts: " + serviceContracts);
             JudgeDClient contractPublisher = Feign.builder()
-                    .decoder(new JacksonDecoder())
-                    .encoder(new JacksonEncoder())
-                    .contract(new JAXRSContract())
-                    .target(JudgeDClient.class, cliOptions.getJudgeDLocation());
-
+                .decoder(new JacksonDecoder())
+                .encoder(new JacksonEncoder())
+                .contract(new JAXRSContract())
+                .target(JudgeDClient.class, cliOptions.getJudgeDLocation());
             contractPublisher.publish(cliOptions.getServiceName(), cliOptions.getServiceVersion(), serviceContracts);
-
-
         } catch (ParseException e) {
             CliOptions.showHelp();
         }
 
     }
 
+    private static ServiceContractsForm readContracts(
+        Map<String, CapabilitiesReader> capabilitiesReaders,
+        Map<String, ExpectationsReader> expectationsReaders,
+        Properties configuration
+    ) throws Exception {
+        Map<String, String> capabilities = new HashMap<>();
+        for (Map.Entry<String, CapabilitiesReader> rc : capabilitiesReaders.entrySet()) {
+            capabilities.put(
+                rc.getKey(),
+                rc.getValue().read(configuration)
+            );
+        }
+        Map<String, Map<String, String>> expectations = new HashMap<>();
+        for (Map.Entry<String, ExpectationsReader> rc : expectationsReaders.entrySet()) {
+            List<Expectation> read = rc.getValue().read(configuration);
+            for (Expectation e : read) {
+                if (!expectations.containsKey(e.getProviderName())) {
+                    expectations.put(e.getProviderName(), new HashMap<>());
+                }
+                expectations.get(e.getProviderName()).put(rc.getKey(), e.getValue());
+            }
+        }
+
+        ServiceContractsForm serviceContracts = new ServiceContractsForm();
+        serviceContracts.setCapabilities(capabilities);
+        serviceContracts.setExpectations(expectations);
+        return serviceContracts;
+    }
 
 
     public static class CliOptions {
 
         private static final Options options = createOptions();
 
-        private final File configFile;
         private final String serviceName;
         private final String serviceVersion;
         private final String judgeDLocation;
+        private final String expectations;
+        private final String capabilities;
 
-        public CliOptions(File configFile, String serviceName, String serviceVersion, String judgeDLocation) {
-            this.configFile = configFile;
+        public CliOptions(String serviceName, String serviceVersion, String judgeDLocation, String expectations, String capabilities) {
             this.serviceName = serviceName;
             this.serviceVersion = serviceVersion;
             this.judgeDLocation = judgeDLocation;
+            this.expectations = expectations != null ? expectations : "";
+            this.capabilities = capabilities != null ? capabilities : "";
         }
 
         private static Options createOptions() {
             Options options = new Options();
-            options.addOption("c", "configFile", true, "Config file location");
+            options.addOption("ex", "expectations", true, "Coma separated list of expectations communication interfaces (if not set will use all available Readers)");
+            options.addOption("cb", "capabilities", true, "Coma separated list of capabilities communication interfaces (if not set will use all available Readers)");
             options.addOption("sn", "serviceName", true, "Name of a service");
             options.addOption("sv", "serviceVersion", true, "Version of a service");
             options.addOption("jd", "judgeDLocation", true, "Url of Judge-D");
@@ -106,23 +117,16 @@ public class ContractPublisher {
             CommandLineParser parser = new DefaultParser();
             CommandLine cmd = parser.parse(options, args);
 
-            if (!cmd.hasOption("serviceName") || !cmd.hasOption("serviceVersion")|| !cmd.hasOption("judgeDLocation")) {
+            if (!cmd.hasOption("serviceName") || !cmd.hasOption("serviceVersion") || !cmd.hasOption("judgeDLocation")) {
                 throw new ParseException("");
             }
-            File configFile = cmd.getOptionValue("c")!=null ? new File(cmd.getOptionValue("c")) : null;
-            if (configFile == null || configFile.exists() && configFile.isFile()) {
-                return new CliOptions(
-                        configFile,
-                        cmd.getOptionValue("sn"),
-                        cmd.getOptionValue("sv"),
-                        cmd.getOptionValue("jd"));
-            } else {
-                throw new IllegalArgumentException(format("Config file '%s' is doesnt exist or is not a file.", cmd.getOptionValue("c")));
-            }
-        }
-
-        public File getConfigFile() {
-            return configFile;
+            return new CliOptions(
+                cmd.getOptionValue("sn"),
+                cmd.getOptionValue("sv"),
+                cmd.getOptionValue("jd"),
+                cmd.getOptionValue("ex"),
+                cmd.getOptionValue("cb")
+            );
         }
 
         public String getServiceName() {
@@ -135,6 +139,24 @@ public class ContractPublisher {
 
         public String getJudgeDLocation() {
             return judgeDLocation;
+        }
+
+        public Set<String> getExpectations() {
+            HashSet<String> result = new HashSet<>();
+            for (String e : this.expectations.split(",")) {
+                if (!e.trim().isEmpty())
+                    result.add(e.trim());
+            }
+            return result;
+        }
+
+        public Set<String> getCapabilities() {
+            HashSet<String> result = new HashSet<>();
+            for (String e : this.capabilities.split(",")) {
+                if (!e.trim().isEmpty())
+                    result.add(e.trim());
+            }
+            return result;
         }
 
         public static void showHelp() {

@@ -1,6 +1,9 @@
 package com.hltech.contracts.judged.publisher.integration.judged;
 
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 public interface JudgeDClient {
 

@@ -4,3 +4,15 @@ sudo: true
 cache:
   directories:
   - $HOME/.m2
+
+jobs:
+  include:
+    - stage: build with maven & generate reports
+      script:
+      - mvn clean verify
+#    - stage: build & publish docker image for server
+#      if: branch = master
+#      script:
+#      - mvn docker:build@build-docker -P docker-app -f ./pom.xml
+#      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+#      - docker push hltech/judge-d-contract-publisher
