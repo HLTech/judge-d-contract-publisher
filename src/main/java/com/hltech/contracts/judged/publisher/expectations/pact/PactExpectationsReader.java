@@ -5,7 +5,6 @@ import com.hltech.contracts.judged.publisher.CommunicationInterface;
 import com.hltech.contracts.judged.publisher.ContractReadException;
 import com.hltech.contracts.judged.publisher.expectations.Expectation;
 import com.hltech.contracts.judged.publisher.expectations.ExpectationsReader;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +13,6 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Slf4j
 @CommunicationInterface("rest")
 public class PactExpectationsReader implements ExpectationsReader {
 
@@ -55,7 +53,7 @@ public class PactExpectationsReader implements ExpectationsReader {
             try {
                 return Optional.of(readExpectation(file));
             } catch (IOException ex) {
-                log.error("Expectations for file {} cannot be read. {}", file.getName(), ex.getMessage());
+                LOGGER.error("Expectations for file {} cannot be read. {}", file.getName(), ex.getMessage());
             }
         }
 

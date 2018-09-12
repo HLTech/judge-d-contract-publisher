@@ -3,11 +3,9 @@ package com.hltech.contracts.judged.publisher.expectations.pact;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-import lombok.Getter;
 
 import java.util.List;
 
-@Getter
 public class Pact {
 
     @JsonCreator
@@ -30,4 +28,20 @@ public class Pact {
     private List<Interaction> interactions;
     private JsonNode metadata;
 
+
+    public Service getProvider() {
+        return provider;
+    }
+
+    public Service getConsumer() {
+        return consumer;
+    }
+
+    public List<Interaction> getInteractions() {
+        return interactions;
+    }
+
+    public JsonNode getMetadata() {
+        return metadata;
+    }
 }

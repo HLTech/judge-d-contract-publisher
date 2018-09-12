@@ -1,39 +1,17 @@
 <assembly>
     <id>bin</id>
+    <baseDirectory>/</baseDirectory>
     <!-- Generates a zip package containing the needed files -->
     <formats>
         <format>zip</format>
     </formats>
 
-    <!-- Adds dependencies to zip package under lib directory -->
     <dependencySets>
         <dependencySet>
-            <!-- Project artifact is not copied under library directory since it is
-                added to the root directory of the zip package. -->
-            <useProjectArtifact>false</useProjectArtifact>
-            <outputDirectory>lib</outputDirectory>
+            <useProjectArtifact>true</useProjectArtifact>
             <unpack>false</unpack>
             <scope>compile</scope>
         </dependencySet>
     </dependencySets>
 
-    <fileSets>
-        <fileSet>
-            <directory>${project.build.scriptSourceDirectory}</directory>
-            <outputDirectory>bin</outputDirectory>
-            <filtered>true</filtered>
-            <includes>
-                <include>*.sh</include>
-            </includes>
-            <fileMode>0755</fileMode>
-        </fileSet>
-        <!-- adds jar package to the root directory of zip package -->
-        <fileSet>
-            <directory>${project.build.directory}</directory>
-            <outputDirectory>lib</outputDirectory>
-            <includes>
-                <include>*.jar</include>
-            </includes>
-        </fileSet>
-    </fileSets>
 </assembly>

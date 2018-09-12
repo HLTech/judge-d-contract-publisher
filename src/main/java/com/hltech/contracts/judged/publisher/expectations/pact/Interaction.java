@@ -3,9 +3,7 @@ package com.hltech.contracts.judged.publisher.expectations.pact;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-import lombok.Getter;
 
-@Getter
 public class Interaction {
 
     @JsonProperty("provider_state")
@@ -23,5 +21,21 @@ public class Interaction {
         this.description = description;
         this.request = request;
         this.response = response;
+    }
+
+    public String getProviderState() {
+        return providerState;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public JsonNode getRequest() {
+        return request;
+    }
+
+    public JsonNode getResponse() {
+        return response;
     }
 }
