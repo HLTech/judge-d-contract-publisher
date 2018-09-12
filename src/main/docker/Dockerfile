@@ -1,14 +1,12 @@
 FROM openjdk:8u181-jre
 
 
-COPY judge-d-contract-publisher*.zip /root/judge-d-contract-publisher.zip
-ADD ./entrypoint.sh /root/judge-d-contract-publisher/entrypoint.sh
+COPY judge-d-contract-publisher-0.2.0-bin.zip /root/judge-d-contract-publisher-0.2.0.zip
 
-RUN cd /root/judge-d-contract-publisher && \
-    unzip ../judge-d-contract-publisher.zip && \
-    rm -f ../judge-d-contract-publisher.zip && \
-    chmod +x /root/judge-d-contract-publisher/entrypoint.sh
+RUN cd /root && \
+    unzip ./judge-d-contract-publisher-0.2.0.zip && \
+    rm -f ./judge-d-contract-publisher-0.2.0.zip
 
-WORKDIR /root/judge-d-contract-publisher
+WORKDIR /root/judge-d-contract-publisher-0.2.0
 
-ENTRYPOINT ["/root/judge-d-contract-publisher/entrypoint.sh"]
+ENTRYPOINT ["/root/judge-d-contract-publisher-0.2.0/bin/contract-publisher.sh"]
