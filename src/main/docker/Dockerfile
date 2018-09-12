@@ -11,4 +11,4 @@ RUN cd /root/judge-d-contract-publisher && \
 
 WORKDIR /root/judge-d-contract-publisher
 
-CMD ["java"]
+ENTRYPOINT ["/root/judge-d-contract-publisher/entrypoint.sh"]
