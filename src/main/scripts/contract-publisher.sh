@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 if [ -n "$JAVA_HOME" ] && [ -x "$JAVA_HOME/bin/java" ];  then
     JAVA="$JAVA_HOME/bin/java"

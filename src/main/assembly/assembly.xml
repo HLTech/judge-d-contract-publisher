@@ -1,6 +1,6 @@
 <assembly>
     <id>bin</id>
-    <baseDirectory>/</baseDirectory>
+    <baseDirectory>judge-d-contract-publisher-0.3.0</baseDirectory>
     <!-- Generates a zip package containing the needed files -->
     <formats>
         <format>zip</format>
@@ -8,10 +8,33 @@
 
     <dependencySets>
         <dependencySet>
-            <useProjectArtifact>true</useProjectArtifact>
+            <!-- Project artifact is not copied under library directory since it is
+                added to the root directory of the zip package. -->
+            <useProjectArtifact>false</useProjectArtifact>
+            <outputDirectory>lib</outputDirectory>
             <unpack>false</unpack>
             <scope>compile</scope>
         </dependencySet>
     </dependencySets>
+
+    <fileSets>
+        <fileSet>
+            <directory>${project.basedir}/src/main/scripts</directory>
+            <outputDirectory>bin</outputDirectory>
+            <filtered>true</filtered>
+            <includes>
+                <include>*.sh</include>
+            </includes>
+            <fileMode>0755</fileMode>
+        </fileSet>
+        <!-- adds jar package to the root directory of zip package -->
+        <fileSet>
+            <directory>${project.build.directory}</directory>
+            <outputDirectory>lib</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+    </fileSets>
 
 </assembly>
