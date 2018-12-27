@@ -13,6 +13,7 @@ import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.core.MediaType;
 import java.util.*;
 
 public class ContractPublisher {
@@ -60,28 +61,27 @@ public class ContractPublisher {
         Map<String, ExpectationsReader> expectationsReaders,
         Properties configuration
     ) throws Exception {
-        Map<String, String> capabilities = new HashMap<>();
+        Map<String, ServiceContractsForm.ContractForm> capabilities = new HashMap<>();
         for (Map.Entry<String, CapabilitiesReader> rc : capabilitiesReaders.entrySet()) {
             capabilities.put(
                 rc.getKey(),
-                rc.getValue().read(configuration)
+                new ServiceContractsForm.ContractForm(rc.getValue().read(configuration), MediaType.APPLICATION_JSON)
             );
         }
-        Map<String, Map<String, String>> expectations = new HashMap<>();
+        Map<String, Map<String, ServiceContractsForm.ContractForm>> expectations = new HashMap<>();
         for (Map.Entry<String, ExpectationsReader> rc : expectationsReaders.entrySet()) {
             List<Expectation> read = rc.getValue().read(configuration);
             for (Expectation e : read) {
                 if (!expectations.containsKey(e.getProviderName())) {
                     expectations.put(e.getProviderName(), new HashMap<>());
                 }
-                expectations.get(e.getProviderName()).put(rc.getKey(), e.getValue());
+                expectations.get(
+                    e.getProviderName()).put(rc.getKey(),
+                    new ServiceContractsForm.ContractForm(e.getValue(), MediaType.APPLICATION_JSON));
             }
         }
 
-        ServiceContractsForm serviceContracts = new ServiceContractsForm();
-        serviceContracts.setCapabilities(capabilities);
-        serviceContracts.setExpectations(expectations);
-        return serviceContracts;
+        return new ServiceContractsForm(capabilities, expectations);
     }
 
 
