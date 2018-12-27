@@ -8,7 +8,7 @@ import javax.ws.rs.PathParam;
 public interface JudgeDClient {
 
     @POST
-    @Path("/contracts/{serviceName}/{serviceVersion}")
+    @Path("/new/contracts/{serviceName}/{serviceVersion}")
     @Consumes("application/json")
     void publish(@PathParam("serviceName") String serviceName, @PathParam("serviceVersion") String serviceVersion, ServiceContractsForm serviceContracts);
 
