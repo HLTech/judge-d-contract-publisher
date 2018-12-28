@@ -6,6 +6,7 @@ import com.hltech.contracts.judged.publisher.ContractReadException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.core.MediaType;
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
@@ -35,5 +36,10 @@ public class SwaggerCapabilitiesReader implements CapabilitiesReader {
         } catch (IOException e) {
             throw new ContractReadException("Unexpected exception when reading swagger.json", e);
         }
+    }
+
+    @Override
+    public String getSupportedFormat() {
+        return MediaType.APPLICATION_JSON;
     }
 }

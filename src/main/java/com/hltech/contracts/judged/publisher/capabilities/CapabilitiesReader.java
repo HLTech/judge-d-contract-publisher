@@ -6,4 +6,5 @@ public interface CapabilitiesReader {
 
     String read(Properties properties);
 
+    String getSupportedFormat();
 }
