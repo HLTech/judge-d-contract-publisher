@@ -65,7 +65,7 @@ public class ContractPublisher {
         for (Map.Entry<String, CapabilitiesReader> rc : capabilitiesReaders.entrySet()) {
             capabilities.put(
                 rc.getKey(),
-                new ServiceContractsForm.ContractForm(rc.getValue().read(configuration), MediaType.APPLICATION_JSON)
+                new ServiceContractsForm.ContractForm(rc.getValue().read(configuration), rc.getValue().getSupportedFormat())
             );
         }
         Map<String, Map<String, ServiceContractsForm.ContractForm>> expectations = new HashMap<>();
@@ -77,7 +77,7 @@ public class ContractPublisher {
                 }
                 expectations.get(
                     e.getProviderName()).put(rc.getKey(),
-                    new ServiceContractsForm.ContractForm(e.getValue(), MediaType.APPLICATION_JSON));
+                    new ServiceContractsForm.ContractForm(e.getValue(), rc.getValue().getSupportedFormat()));
             }
         }
 
