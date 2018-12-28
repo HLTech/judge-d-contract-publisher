@@ -7,4 +7,5 @@ public interface ExpectationsReader {
 
     List<Expectation> read(Properties properties) throws Exception;
 
+    String getSupportedFormat();
 }

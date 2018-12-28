@@ -8,6 +8,7 @@ import com.hltech.contracts.judged.publisher.expectations.ExpectationsReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.core.MediaType;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -23,6 +24,7 @@ public class PactExpectationsReader implements ExpectationsReader {
 
     public final ObjectMapper objectMapper = new ObjectMapper();
 
+    @Override
     public List<Expectation> read(Properties configuration) {
         String pactsLocation = DEFAULT_PACTS_LOCATION;
         if (configuration.containsKey(PACTS_LOCATION_PARAMETER)) {
@@ -46,6 +48,11 @@ public class PactExpectationsReader implements ExpectationsReader {
             throw new ContractReadException("Pacts location dir not found: " + pactsLocationDir);
         }
         return results;
+    }
+
+    @Override
+    public String getSupportedFormat() {
+        return MediaType.APPLICATION_JSON;
     }
 
     private Optional<Expectation> processFile(File file) {
