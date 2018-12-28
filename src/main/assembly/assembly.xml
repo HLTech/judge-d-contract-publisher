@@ -1,6 +1,6 @@
 <assembly>
     <id>bin</id>
-    <baseDirectory>judge-d-contract-publisher-0.3.1</baseDirectory>
+    <baseDirectory>judge-d-contract-publisher-0.3.2</baseDirectory>
     <!-- Generates a zip package containing the needed files -->
     <formats>
         <format>zip</format>
