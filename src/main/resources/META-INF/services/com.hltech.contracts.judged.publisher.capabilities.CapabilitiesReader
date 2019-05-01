@@ -1,1 +1,2 @@
 com.hltech.contracts.judged.publisher.capabilities.SwaggerCapabilitiesReader
+com.hltech.contracts.judged.publisher.capabilities.VauntCapabilitiesReader
