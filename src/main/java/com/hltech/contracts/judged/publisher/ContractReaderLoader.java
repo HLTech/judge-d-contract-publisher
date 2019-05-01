@@ -24,9 +24,9 @@ public class ContractReaderLoader {
     }
 
     private <T> Map<String, T> loadContractReaders(Class<T> service, Set<String> requestedCommunicationInterfaces) {
-        ServiceLoader<T> load = ServiceLoader.load(service);
+        ServiceLoader<T> loader = ServiceLoader.load(service);
 
-        return stream(spliteratorUnknownSize(load.iterator(), Spliterator.ORDERED), false)
+        return stream(spliteratorUnknownSize(loader.iterator(), Spliterator.ORDERED), false)
             .filter(i -> i.getClass().getAnnotation(CommunicationInterface.class) != null)
             .filter(i -> requestedCommunicationInterfaces.contains(i.getClass().getAnnotation(CommunicationInterface.class).value()))
             .collect(toMap(

@@ -1,0 +1,83 @@
+{
+  "name": "information-service",
+  "capabilities": {
+    "contracts": [
+      {
+        "destinationType": "QUEUE",
+        "destinationName": "request_for_information_queue",
+        "body": {
+          "type": "object",
+          "id": "urn:jsonschema:com:hltech:vaunt:generator:domain:representation:RepresentationWriterSpec:RequestMessage",
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      {
+        "destinationType": "TOPIC",
+        "destinationName": "something_changed_topic",
+        "body": {
+          "type": "object",
+          "id": "urn:jsonschema:com:hltech:vaunt:generator:domain:representation:RepresentationWriterSpec:ChangedEvent",
+          "properties": {
+            "timestamp": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    ]
+  },
+  "expectations": {
+    "providerNameToContracts": {
+      "audit-service": [
+        {
+          "destinationType": "QUEUE",
+          "destinationName": "audit_queue",
+          "body": {
+            "type": "object",
+            "id": "urn:jsonschema:com:hltech:vaunt:generator:domain:representation:RepresentationWriterSpec:AuditMessage",
+            "properties": {
+              "payload": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      ],
+      "remote-client": [
+        {
+          "destinationType": "QUEUE",
+          "destinationName": "reject_information_queue",
+          "body": {
+            "type": "object",
+            "id": "urn:jsonschema:com:hltech:vaunt:generator:domain:representation:RepresentationWriterSpec:RejectMessage",
+            "properties": {
+              "reason": {
+                "type": "string"
+              },
+              "code": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        {
+          "destinationType": "QUEUE",
+          "destinationName": "accept_information_queue",
+          "body": {
+            "type": "object",
+            "id": "urn:jsonschema:com:hltech:vaunt:generator:domain:representation:RepresentationWriterSpec:AcceptMessage",
+            "properties": {
+              "id": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
