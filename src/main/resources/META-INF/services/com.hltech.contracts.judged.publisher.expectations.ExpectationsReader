@@ -1,1 +1,2 @@
 com.hltech.contracts.judged.publisher.expectations.pact.PactExpectationsReader
+com.hltech.contracts.judged.publisher.expectations.VauntExpectationsReader
