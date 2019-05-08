@@ -1,7 +1,6 @@
 package com.hltech.contracts.judged.publisher.capabilities;
 
 import com.hltech.contracts.judged.publisher.CommunicationInterface;
-import com.hltech.contracts.judged.publisher.vaunt.Capabilities;
 import com.hltech.contracts.judged.publisher.vaunt.Contract;
 import com.hltech.contracts.judged.publisher.vaunt.Service;
 import com.hltech.contracts.judged.publisher.vaunt.VauntFileReader;
@@ -26,7 +25,7 @@ public class VauntCapabilitiesReader implements CapabilitiesReader {
             .flatMap(capabilities -> capabilities.getContracts().stream())
             .collect(Collectors.toList());
 
-        return vauntFileReader.serialize(new Capabilities(contracts));
+        return vauntFileReader.serialize(contracts);
     }
 
     @Override
