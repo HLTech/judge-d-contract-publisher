@@ -2,12 +2,11 @@ package com.hltech.contracts.judged.publisher.expectations;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import com.hltech.contracts.judged.publisher.CommunicationInterface;
-import com.hltech.contracts.judged.publisher.vaunt.Contract;
-import com.hltech.contracts.judged.publisher.vaunt.Expectations;
-import com.hltech.contracts.judged.publisher.vaunt.Service;
 import com.hltech.contracts.judged.publisher.vaunt.VauntFileReader;
+import com.hltech.vaunt.core.domain.model.Contract;
+import com.hltech.vaunt.core.domain.model.Expectations;
+import com.hltech.vaunt.core.domain.model.Service;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.ws.rs.core.MediaType;

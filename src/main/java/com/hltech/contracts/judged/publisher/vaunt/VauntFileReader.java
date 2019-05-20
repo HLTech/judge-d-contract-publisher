@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.hltech.contracts.judged.publisher.ContractReadException;
+import com.hltech.vaunt.core.domain.model.Service;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
