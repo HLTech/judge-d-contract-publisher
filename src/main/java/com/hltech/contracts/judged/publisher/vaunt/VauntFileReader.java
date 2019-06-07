@@ -3,6 +3,7 @@ package com.hltech.contracts.judged.publisher.vaunt;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hltech.contracts.judged.publisher.ContractReadException;
 import com.hltech.vaunt.core.domain.model.Service;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,7 @@ public class VauntFileReader {
     private static final String DEFAULT_VAUNT_FILE_LOCATION = "./target/classes/static/vaunt";
     private static final String JSON_FILE_SUFFIX = ".json";
 
-    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new GuavaModule());
+    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new GuavaModule()).registerModule(new JavaTimeModule());
 
     public List<Service> readVauntFiles(Properties properties) {
         String vauntLocation = DEFAULT_VAUNT_FILE_LOCATION;
