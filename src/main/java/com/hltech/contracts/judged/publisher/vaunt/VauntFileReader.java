@@ -1,15 +1,11 @@
 package com.hltech.contracts.judged.publisher.vaunt;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.guava.GuavaModule;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hltech.contracts.judged.publisher.ContractReadException;
+import com.hltech.vaunt.core.VauntSerializer;
 import com.hltech.vaunt.core.domain.model.Service;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Properties;
@@ -23,7 +19,7 @@ public class VauntFileReader {
     private static final String DEFAULT_VAUNT_FILE_LOCATION = "./target/classes/static/vaunt";
     private static final String JSON_FILE_SUFFIX = ".json";
 
-    private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new GuavaModule()).registerModule(new JavaTimeModule());
+    private final VauntSerializer serializer = new VauntSerializer();
 
     public List<Service> readVauntFiles(Properties properties) {
         String vauntLocation = DEFAULT_VAUNT_FILE_LOCATION;
@@ -38,11 +34,7 @@ public class VauntFileReader {
     }
 
     public String serialize(Object value) {
-        try {
-            return objectMapper.writeValueAsString(value);
-        } catch (JsonProcessingException ex) {
-            throw new ContractReadException("Error when trying to serialize service capabilities.", ex);
-        }
+        return serializer.serialize(value);
     }
 
     private List<Service> readFromLocation(String vauntLocation) {
@@ -58,7 +50,7 @@ public class VauntFileReader {
     private List<Service> processFiles(File[] files) {
         return Stream.of(files)
             .filter(this::jsonFile)
-            .map(this::readFrom)
+            .map(serializer::readServiceDefinition)
             .collect(Collectors.toList());
     }
 
@@ -66,11 +58,4 @@ public class VauntFileReader {
         return file.getName().endsWith(JSON_FILE_SUFFIX);
     }
 
-    private Service readFrom(File file) {
-        try {
-            return objectMapper.readValue(file, Service.class);
-        } catch (IOException ex) {
-            throw new ContractReadException("Cannot read vaunt file: " + file.getAbsolutePath(), ex);
-        }
-    }
 }
