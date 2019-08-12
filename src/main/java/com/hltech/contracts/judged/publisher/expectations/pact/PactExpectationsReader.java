@@ -29,7 +29,7 @@ public class PactExpectationsReader implements ExpectationsReader {
         String pactsLocation = DEFAULT_PACTS_LOCATION;
         if (configuration.containsKey(PACTS_LOCATION_PARAMETER)) {
             pactsLocation = configuration.getProperty(PACTS_LOCATION_PARAMETER);
-            LOGGER.info("using: '" + pactsLocation + "' as path to swagger.json ");
+            LOGGER.info("using: '" + pactsLocation + "' as path to pact files.");
         } else {
             LOGGER.info(PACTS_LOCATION_PARAMETER + " parameters has not been provided. Using default pacts location: " + DEFAULT_PACTS_LOCATION);
         }

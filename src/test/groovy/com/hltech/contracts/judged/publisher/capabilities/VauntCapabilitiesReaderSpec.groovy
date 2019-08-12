@@ -28,12 +28,12 @@ class VauntCapabilitiesReaderSpec extends Specification {
         and:
             expect capabilities, hasJsonPath('$[0].destinationType', equalTo('QUEUE'))
             expect capabilities, hasJsonPath('$[0].destinationName', equalTo('request_for_information_queue'))
-            expect capabilities, hasJsonPath('$[0].body.type', equalTo('object'))
-            expect capabilities, hasJsonPath('$[0].body.properties.name.type', equalTo('string'))
+            expect capabilities, hasJsonPath('$[0].message.type', equalTo('object'))
+            expect capabilities, hasJsonPath('$[0].message.properties.name.type', equalTo('string'))
         and:
             expect capabilities, hasJsonPath('$[1].destinationType', equalTo('TOPIC'))
             expect capabilities, hasJsonPath('$[1].destinationName', equalTo('something_changed_topic'))
-            expect capabilities, hasJsonPath('$[1].body.type', equalTo('object'))
-            expect capabilities, hasJsonPath('$[1].body.properties.timestamp.type', equalTo('integer'))
+            expect capabilities, hasJsonPath('$[1].message.type', equalTo('object'))
+            expect capabilities, hasJsonPath('$[1].message.properties.timestamp.type', equalTo('integer'))
     }
 }

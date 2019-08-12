@@ -30,19 +30,19 @@ class VauntExpectationsReaderSpec extends Specification {
             expect remoteClientExpectations.value, hasJsonPath('$', hasSize(2))
             expect remoteClientExpectations.value, hasJsonPath('$[0].destinationType', equalTo('QUEUE'))
             expect remoteClientExpectations.value, hasJsonPath('$[0].destinationName', equalTo('reject_information_queue'))
-            expect remoteClientExpectations.value, hasJsonPath('$[0].body.type', equalTo('object'))
-            expect remoteClientExpectations.value, hasJsonPath('$[0].body.properties.reason.type', equalTo('string'))
-            expect remoteClientExpectations.value, hasJsonPath('$[0].body.properties.code.type', equalTo('integer'))
+            expect remoteClientExpectations.value, hasJsonPath('$[0].message.type', equalTo('object'))
+            expect remoteClientExpectations.value, hasJsonPath('$[0].message.properties.reason.type', equalTo('string'))
+            expect remoteClientExpectations.value, hasJsonPath('$[0].message.properties.code.type', equalTo('integer'))
             expect remoteClientExpectations.value, hasJsonPath('$[1].destinationType', equalTo('QUEUE'))
             expect remoteClientExpectations.value, hasJsonPath('$[1].destinationName', equalTo('accept_information_queue'))
-            expect remoteClientExpectations.value, hasJsonPath('$[1].body.properties.id.type', equalTo('integer'))
+            expect remoteClientExpectations.value, hasJsonPath('$[1].message.properties.id.type', equalTo('integer'))
         and:
             def auditServiceExpectations = expectations.find { it.providerName == 'audit-service' }
             expect auditServiceExpectations.value, isJson()
             expect auditServiceExpectations.value, hasJsonPath('$', hasSize(1))
             expect auditServiceExpectations.value, hasJsonPath('$[0].destinationType', equalTo('QUEUE'))
             expect auditServiceExpectations.value, hasJsonPath('$[0].destinationName', equalTo('audit_queue'))
-            expect auditServiceExpectations.value, hasJsonPath('$[0].body.type', equalTo('object'))
-            expect auditServiceExpectations.value, hasJsonPath('$[0].body.properties.payload.type', equalTo('string'))
+            expect auditServiceExpectations.value, hasJsonPath('$[0].message.type', equalTo('object'))
+            expect auditServiceExpectations.value, hasJsonPath('$[0].message.properties.payload.type', equalTo('string'))
     }
 }

@@ -5,7 +5,7 @@
       {
         "destinationType": "QUEUE",
         "destinationName": "request_for_information_queue",
-        "body": {
+        "message": {
           "type": "object",
           "id": "urn:jsonschema:com:hltech:vaunt:generator:domain:representation:RepresentationWriterSpec:RequestMessage",
           "properties": {
@@ -18,7 +18,7 @@
       {
         "destinationType": "TOPIC",
         "destinationName": "something_changed_topic",
-        "body": {
+        "message": {
           "type": "object",
           "id": "urn:jsonschema:com:hltech:vaunt:generator:domain:representation:RepresentationWriterSpec:ChangedEvent",
           "properties": {
@@ -36,7 +36,7 @@
         {
           "destinationType": "QUEUE",
           "destinationName": "audit_queue",
-          "body": {
+          "message": {
             "type": "object",
             "id": "urn:jsonschema:com:hltech:vaunt:generator:domain:representation:RepresentationWriterSpec:AuditMessage",
             "properties": {
@@ -51,7 +51,7 @@
         {
           "destinationType": "QUEUE",
           "destinationName": "reject_information_queue",
-          "body": {
+          "message": {
             "type": "object",
             "id": "urn:jsonschema:com:hltech:vaunt:generator:domain:representation:RepresentationWriterSpec:RejectMessage",
             "properties": {
@@ -67,7 +67,7 @@
         {
           "destinationType": "QUEUE",
           "destinationName": "accept_information_queue",
-          "body": {
+          "message": {
             "type": "object",
             "id": "urn:jsonschema:com:hltech:vaunt:generator:domain:representation:RepresentationWriterSpec:AcceptMessage",
             "properties": {
