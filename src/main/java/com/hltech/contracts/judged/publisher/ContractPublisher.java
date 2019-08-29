@@ -13,7 +13,6 @@ import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.core.MediaType;
 import java.util.*;
 
 public class ContractPublisher {
@@ -51,9 +50,8 @@ public class ContractPublisher {
                 .target(JudgeDClient.class, cliOptions.getJudgeDLocation());
             contractPublisher.publish(cliOptions.getServiceName(), cliOptions.getServiceVersion(), serviceContracts);
         } catch (ParseException e) {
-            CliOptions.showHelp();
+            CliOptions.showHelp(e.getMessage());
         }
-
     }
 
     private static ServiceContractsForm readContracts(
@@ -84,7 +82,6 @@ public class ContractPublisher {
         return new ServiceContractsForm(capabilities, expectations);
     }
 
-
     public static class CliOptions {
 
         private static final Options options = createOptions();
@@ -95,7 +92,7 @@ public class ContractPublisher {
         private final String expectations;
         private final String capabilities;
 
-        public CliOptions(String serviceName, String serviceVersion, String judgeDLocation, String expectations, String capabilities) {
+        CliOptions(String serviceName, String serviceVersion, String judgeDLocation, String expectations, String capabilities) {
             this.serviceName = serviceName;
             this.serviceVersion = serviceVersion;
             this.judgeDLocation = judgeDLocation;
@@ -104,22 +101,18 @@ public class ContractPublisher {
         }
 
         private static Options createOptions() {
-            Options options = new Options();
-            options.addOption("ex", "expectations", true, "Coma separated list of expectations communication interfaces (if not set will use all available Readers)");
-            options.addOption("cb", "capabilities", true, "Coma separated list of capabilities communication interfaces (if not set will use all available Readers)");
-            options.addOption("sn", "serviceName", true, "Name of a service");
-            options.addOption("sv", "serviceVersion", true, "Version of a service");
-            options.addOption("jd", "judgeDLocation", true, "Url of Judge-D");
-            return options;
+            return new Options()
+                .addOption("ex", "expectations", true, "Coma separated list of expectations communication interfaces (if not set will use all available Readers)")
+                .addOption("cb", "capabilities", true, "Coma separated list of capabilities communication interfaces (if not set will use all available Readers)")
+                .addRequiredOption("sn", "serviceName", true, "Name of a service")
+                .addRequiredOption("sv", "serviceVersion", true, "Version of a service")
+                .addRequiredOption("jd", "judgeDLocation", true, "Url of Judge-D");
         }
 
-        public static CliOptions parseCommandList(String[] args) throws ParseException, IllegalArgumentException {
+        static CliOptions parseCommandList(String[] args) throws ParseException, IllegalArgumentException {
             CommandLineParser parser = new DefaultParser();
             CommandLine cmd = parser.parse(options, args);
 
-            if (!cmd.hasOption("serviceName") || !cmd.hasOption("serviceVersion") || !cmd.hasOption("judgeDLocation")) {
-                throw new ParseException("");
-            }
             return new CliOptions(
                 cmd.getOptionValue("sn"),
                 cmd.getOptionValue("sv"),
@@ -129,19 +122,19 @@ public class ContractPublisher {
             );
         }
 
-        public String getServiceName() {
+        String getServiceName() {
             return serviceName;
         }
 
-        public String getServiceVersion() {
+        String getServiceVersion() {
             return serviceVersion;
         }
 
-        public String getJudgeDLocation() {
+        String getJudgeDLocation() {
             return judgeDLocation;
         }
 
-        public Set<String> getExpectations() {
+        Set<String> getExpectations() {
             HashSet<String> result = new HashSet<>();
             for (String e : this.expectations.split(",")) {
                 if (!e.trim().isEmpty())
@@ -150,7 +143,7 @@ public class ContractPublisher {
             return result;
         }
 
-        public Set<String> getCapabilities() {
+        Set<String> getCapabilities() {
             HashSet<String> result = new HashSet<>();
             for (String e : this.capabilities.split(",")) {
                 if (!e.trim().isEmpty())
@@ -159,11 +152,10 @@ public class ContractPublisher {
             return result;
         }
 
-        public static void showHelp() {
+        static void showHelp(String header) {
             HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("judge-d-contract-publisher", options, true);
+            formatter.printHelp("judge-d-contract-publisher", header, options, null, true);
         }
-
 
     }
 }
